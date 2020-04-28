@@ -1,9 +1,11 @@
 package filepersistence;
 
 import java.io.*;
+import java.util.Date;
 
 public class SensorDataStorage implements ISensorDataStorage
 {
+    String filename = "testfile";
     @Override
     public void writeDataSet(String sensorName, long date, float[] measurements, DataOutputStream dos) throws PersistenceException
     {
@@ -52,7 +54,7 @@ public class SensorDataStorage implements ISensorDataStorage
 
         try
         {
-            os = new FileOutputStream("testfile.txt");
+            os = new FileOutputStream(filename + ".txt");
             dos = new DataOutputStream(os);
         }
         catch(FileNotFoundException ex)
@@ -71,6 +73,63 @@ public class SensorDataStorage implements ISensorDataStorage
         catch(IOException ex)
         {
             System.err.println("Couldn't write to file - fatal");
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void readDataSet(DataInputStream dis)
+    {
+        try
+        {
+            String name = dis.readUTF();
+            System.out.println(name);
+            long date = dis.readLong();
+            System.out.println(new Date(date));
+            int length = dis.readInt();
+            for(int i = 0; i < length; i++)
+            {
+                float measurement = dis.readFloat();
+                System.out.println(measurement);
+            }
+        }
+        catch (IOException ex)
+        {
+            System.err.println("Couldn't read from file - fatal");
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void readFromFile()
+    {
+        InputStream is;
+        DataInputStream dis = null;
+
+        try
+        {
+            is = new FileInputStream("testfile.txt");
+            dis = new DataInputStream(is);
+        }
+        catch (FileNotFoundException ex)
+        {
+            System.err.println("Couldn't open file - fatal");
+            System.exit(0);
+        }
+
+        try
+        {
+            int length = dis.readInt(); //length determines how many datasets are to be read
+            for(int i = 0; i < length; i++)
+            {
+                System.out.printf("Dataset #%d%n", i + 1);
+                readDataSet(dis);
+                System.out.println();
+            }
+        }
+        catch (IOException ex)
+        {
+            System.err.println("Couldn't read from file - fatal");
             System.exit(0);
         }
     }

@@ -1,6 +1,6 @@
 package filepersistence;
 
-import java.io.DataOutputStream;
+import java.io.*;
 
 /*
     I decided to rewrite the writeDataSet and writeToFile methods I was using to proof that i understood the topic.
@@ -27,4 +27,11 @@ public interface ISensorDataStorage
      * @throws PersistenceException if something unexpected happened. Insufficient right, medium broken, offline..
      */
     void writeToFile(String sensorName, long[] timeStamps, float[][] values) throws PersistenceException;                       //Writes all given data sets to file
+
+    void readDataSet(DataInputStream dis);
+
+    /**
+     *
+     */
+    void readFromFile();
 }
